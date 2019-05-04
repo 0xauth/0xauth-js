@@ -6,7 +6,6 @@
 
 module.exports = {
   Client: require('./client'),
-  Server: require('./server'),
-  config: require('./config')
+  Server: require('./server')
 }
 
