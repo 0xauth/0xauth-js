@@ -1,0 +1,29 @@
+{
+  "name": "0xauth",
+  "version": "0.0.2",
+  "license": "MIT",
+  "main": "index.js",
+  "author": "Francesco Sullo <francesco@sullo.co>",
+  "homepage": "https://0xauth.com",
+  "scripts": {
+    "test": "npx mocha 'test/server/**/*-spec.js'"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "eth-sig-util": "^1.4.2",
+    "ethereum-ens": "^0.7.4",
+    "ethers": "^4.0.27",
+    "jsonwebtoken": "^8.5.1",
+    "superagent": "^3.5.2",
+    "tronweb": "^2.5.0"
+  },
+  "devDependencies": {
+    "lodash": "^4.17.11",
+    "mocha": "^5.1.1",
+    "web3": "^0.20.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/0xAuth/0xauth-js"
+  }
+}
