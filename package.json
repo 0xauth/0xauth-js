@@ -7,7 +7,8 @@
   "homepage": "https://0xauth.com",
   "scripts": {
     "lint": "eslint ./server/**",
-    "test": "nyc --reporter=html --reporter=text mocha 'test/server/**/*-spec.js'"
+    "test": "mocha 'test/server/**/*-spec.js'",
+    "coverage": "nyc --reporter=html --reporter=text mocha 'test/server/**/*-spec.js'"
   },
   "dependencies": {
     "ethers": "^4.0.27",
