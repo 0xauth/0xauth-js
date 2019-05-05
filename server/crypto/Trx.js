@@ -1,11 +1,11 @@
 const TronWeb = require('tronweb')
-const {toUtf8Bytes, keccak256, SigningKey, recoverAddress} = require('./ethers')
+const {toUtf8Bytes, keccak256, SigningKey, recoverAddress} = require('../utils/ethers')
 const constants = require('../constants')
-const {isHex, hexStr2byteArray} = require('./common')
+const {isHex, hexStr2byteArray} = require('../utils/common')
 
 class Trx {
 
-  sign(message, privateKey) {
+  static sign(message, privateKey) {
 
     if (!isHex(message)) {
       message = Buffer.from(message, 'utf8').toString('hex')
@@ -15,22 +15,25 @@ class Trx {
 
     const signature = (new SigningKey(privateKey))
         .signDigest(keccak256([
-          ...toUtf8Bytes(constants.trx.MESSAGE_HEADER),
+          ...toUtf8Bytes(constants.TRX_MESSAGE_HEADER),
           ...hexStr2byteArray(message)
         ]))
 
-    const signatureHex = [
+    return [
       '0x',
       signature.r.substring(2),
       signature.s.substring(2),
       Number(signature.v).toString(16)
     ].join('')
-
-    return signatureHex
-
   }
 
-  verify(message, signature, address) {
+  static normalizeAddress(address) {
+    if (TronWeb.isAddress(address)) {
+      return TronWeb.address.fromHex(address)
+    }
+  }
+
+  static verify(message, signature, address) {
 
     if (!isHex(message)) {
       message = Buffer.from(message, 'utf8').toString('hex')
@@ -40,23 +43,22 @@ class Trx {
     signature = signature.replace(/^0x/, '')
 
     const messageBytes = [
-      ...toUtf8Bytes(constants.trx.MESSAGE_HEADER),
+      ...toUtf8Bytes(constants.TRX_MESSAGE_HEADER),
       ...hexStr2byteArray(message)
     ]
 
     const messageDigest = keccak256(messageBytes)
     const recovered = recoverAddress(messageDigest, {
-      recoveryParam: signature.substring(128, 130) == '1c' ? 1 : 0,
+      recoveryParam: signature.substring(128, 130) === '1c' ? 1 : 0,
       r: '0x' + signature.substring(0, 64),
       s: '0x' + signature.substring(64, 128)
     })
 
-    const recoveredAddress = constants.trx.ADDRESS_PREFIX + recovered.substr(2)
+    const recoveredAddress = constants.TRX_ADDRESS_PREFIX + recovered.substr(2)
     return TronWeb.address.fromHex(recoveredAddress) === TronWeb.address.fromHex(address)
   }
 
 
-
 }
 
-module.exports = new Trx
+module.exports = Trx
