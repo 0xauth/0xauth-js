@@ -1,22 +1,24 @@
 const assert = require('assert')
-const auth = require('../../server/Auth')
+const Auth = require('../../server/Auth')
 const fixtures = require('../fixtures')
 
 describe('Auth', function () {
 
-  describe('generateAuthStr', function () {
+  let auth
+
+  before(function() {
+    auth = new Auth
+  })
+
+  describe('getAuthorizationToken', function () {
 
     describe('trx', function () {
 
-      it('should generate an authStr from an address in base58 format', async function () {
-        const authStr = auth.generateAuthStr(fixtures.rdns, fixtures.trx, fixtures.trxBase58Addr, fixtures.ts)
-        assert(authStr === fixtures.authStr)
+      it('should generate an authToken from an address in base58 format', async function () {
+        const authToken = auth.getAuthorizationToken(null, fixtures.rdns, fixtures.ts, fixtures.extra)
+        assert(authToken === fixtures.authToken)
       })
 
-      it('should generate an authStr from an address in hex format', async function () {
-        const authStr = auth.generateAuthStr(fixtures.rdns, fixtures.trx, fixtures.trxHexAddr, fixtures.ts)
-        assert(authStr === fixtures.authStr)
-      })
     })
 
   })
@@ -26,7 +28,7 @@ describe('Auth', function () {
     describe('trx', function () {
 
       it('should return a signed token', async function () {
-        const signedToken = auth.signAndReturnToken(fixtures.authStr, fixtures.privateKey)
+        const signedToken = auth.signAndReturnToken(fixtures.authToken, fixtures.trx, fixtures.privateKey)
         assert(signedToken === fixtures.signedToken)
       })
 
@@ -44,7 +46,5 @@ describe('Auth', function () {
     })
 
   })
-
-
 
 })

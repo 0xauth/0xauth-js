@@ -1,56 +1,65 @@
-const Trx = require('./crypto/Trx')
 // const eth = require('./crypto/eth')
-const constants = require('./constants')
+const Trx = require('./protocol/Trx')
 const {supportedChains} = require('./config')
+const {arrayToAuthToken, tokenToArray, isRdns, randomHexString, isTimestamp} = require('./utils')
 
 class Auth {
 
   constructor() {
-    this['0xAuth'] = '1'
+    this.version = '1'
   }
 
-  generateAuthStr(rdns, chain, address, ts = false) {
-    if (!Auth.isRdns(rdns)) {
+  getAuthorizationToken(version, rdns, ts, extra) {
+    if (typeof version !== 'string') {
+      version = this.version
+    }
+    if (this.isSupportedVersion(version)) {
+      throw new Error('A valid 0xAuth version is required.')
+    }
+    if (!isRdns(rdns)) {
       throw new Error('A valid rdns is required.')
     }
+    if (!isTimestamp(ts)) {
+      throw new Error('A valid timestamp is required.')
+    }
+    const auth = [
+      ['0xAuth', version],
+      rdns,
+      (ts || parseInt(Date.now() / 1000)).toString(),
+      extra || [randomHexString(2)]
+    ]
+    return arrayToAuthToken(auth)
+  }
+
+  signAndReturnToken(authToken, chain, privateKey) {
     chain = Auth.normalizeChain(chain)
     if (!chain) {
       throw new Error('A valid, supported chain is required.')
     }
-    address = Auth.normalizeAddress(chain, address)
+    const address = Auth.getAddress(chain, privateKey)
     if (!address) {
       throw new Error('A valid address is required.')
     }
-    const auth = {
-      '0xAuth': this['0xAuth'],
-      rdns,
-      ts: (ts || parseInt(Date.now() / 1000)).toString(),
-      addr: [chain, address]
-    }
-    return Auth.objToString(auth)
-  }
-
-  signAndReturnToken(authStr, privateKey) {
-    const elems = Auth.stringToObj(authStr)
-    if (elems['0xAuth'] === this['0xAuth']) {
-      return Auth.signAndReturnToken_v1(authStr, elems.addr[0], privateKey)
+    const elems = tokenToArray(authToken)
+    if (elems[0][1] === this.version) {
+      return Auth.signAndReturnToken_v1(authToken, chain, address, privateKey)
     }
     return false
   }
 
   verifySignedToken(signedToken) {
-    const elems = Auth.stringToObj(signedToken)
-    if (elems['0xAuth'] === this['0xAuth']) {
-      return Auth.verifySignedToken_v1(signedToken, elems)
+    signedToken = tokenToArray(signedToken)
+    if (signedToken[0][1] === this.version) {
+      return Auth.verifySignedToken_v1(signedToken)
     }
     return false
   }
 
-  static signAndReturnToken_v1(authStr, chain, privateKey) {
+  static signAndReturnToken_v1(authToken, chain, address, privateKey) {
     let sig
     switch (chain) {
       case 'trx':
-        sig = ['tronweb', '1', Trx.sign(authStr, privateKey)].join(',')
+        sig = [Trx.sign(authToken, privateKey), 'tronweb', '1'].join(':')
         break
       case 'eth':
 
@@ -58,17 +67,17 @@ class Auth {
       default:
         return false
     }
-    return [authStr, 'sig:' + sig].join(';')
+    return [authToken, [chain, address].join(':'), sig].join(';')
   }
 
-  static verifySignedToken_v1(signedToken, elems) {
-    const authStr = signedToken.split(';sig:')[0]
-    const [chain, address] = elems.addr
-    const [signer, version, signature] = elems.sig
+  static verifySignedToken_v1(signedToken) {
+    const authToken = arrayToAuthToken(signedToken.slice(0, 4))
+    const [chain, address] = signedToken[4]
+    const [signature, signer, version] = signedToken[5]
     switch (chain) {
       case 'trx':
         if (signer === 'tronweb' && version === '1') {
-          return Trx.verify(authStr, signature, address)
+          return Trx.verify(authToken, signature, address)
         }
         break
       case 'eth':
@@ -80,29 +89,10 @@ class Auth {
     return false
   }
 
-  static objToString(obj) {
-    let str = ''
-    for (let key in obj) {
-      let val = obj[key]
-      str += (str ? ';' : '') + [key, Array.isArray(val) ? val.join(',') : val].join(':')
-    }
-    return str
-  }
-
-  static stringToObj(str) {
-    var obj = {}
-    for (let elem of str.split(';')) {
-      let keyValue = elem.split(':')
-      let val = keyValue[1]
-      obj[keyValue[0]] = /,/.test(val) ? val.split(',') : val
-    }
-    return obj
-  }
-
-  static normalizeAddress(chain, address) {
+  static getAddress(chain, privateKey) {
     switch (chain) {
       case 'trx':
-        return Trx.normalizeAddress(address)
+        return Trx.getAddress(privateKey)
       case 'eth':
 
         break
@@ -117,10 +107,10 @@ class Auth {
     }
   }
 
-  static isRdns(rdns) {
-    return /^[A-Za-x]{2,6}((?!-)\.[A-Za-z0-9-]{1,63}(?<!-))+$/.test(rdns)
+  isSupportedVersion(version) {
+    return version !== this.version
   }
 
 }
 
-module.exports = new Auth
+module.exports = Auth
