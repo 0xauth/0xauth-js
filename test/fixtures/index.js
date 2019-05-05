@@ -4,10 +4,11 @@ module.exports = {
   trxBase58Addr: 'TXtMUJpGugXqoCRdvzEGPXqRZU7vbf2SnF',
   trx: 'trx',
   eth: 'eth',
+  extra: 'fb7c',
   rdns: 'com.0xnil.Auth',
   ts: 1556997887,
-  authStr: '0xAuth:1;rdns:com.0xnil.Auth;ts:1556997887;addr:trx,TXtMUJpGugXqoCRdvzEGPXqRZU7vbf2SnF',
-  signedToken: '0xAuth:1;rdns:com.0xnil.Auth;ts:1556997887;addr:trx,TXtMUJpGugXqoCRdvzEGPXqRZU7vbf2SnF;sig:tronweb,1,0xdb8dd856c55aea4e0dcc2e08dd78fe3f8916624458cadb6ca7a8196be47273855d6d56c851d5ac210903c923e2a8e5200de180967a27428fc53ae43449f770021c'
+  authToken: '0xAuth:1;com.0xnil.Auth;1556997887;fb7c',
+  signedToken: '0xAuth:1;com.0xnil.Auth;1556997887;fb7c;trx:TXtMUJpGugXqoCRdvzEGPXqRZU7vbf2SnF;0x9999d58d29c9a31d5ec06bb02b4a0dce1705c922041bc4a871704f46f565ef40513a696ae6a34c8089184bbea05c53ad2d92b6e8424de930bcd72e41253e258c1c:tronweb:1'
   ,
   privateKey: '63daa77fa40f5b08d4c7d439177d332219ec0e424d01dca11e358e1da7f023db'
 }

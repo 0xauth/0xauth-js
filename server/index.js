@@ -1,7 +1,8 @@
 class Server {
 
   constructor() {
-    this.auth = require('./Auth')
+    this.Auth = require('./Auth')
+    this.auth = new this.Auth
   }
 }
 

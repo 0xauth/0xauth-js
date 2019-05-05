@@ -1,7 +1,14 @@
 const TronWeb = require('tronweb')
-const {toUtf8Bytes, keccak256, SigningKey, recoverAddress} = require('../utils/ethers')
+const {
+  toUtf8Bytes,
+  keccak256,
+  SigningKey,
+  recoverAddress,
+  isHex,
+  hexStr2byteArray
+} = require('../utils')
+
 const constants = require('../constants')
-const {isHex, hexStr2byteArray} = require('../utils/common')
 
 class Trx {
 
@@ -27,10 +34,8 @@ class Trx {
     ].join('')
   }
 
-  static normalizeAddress(address) {
-    if (TronWeb.isAddress(address)) {
-      return TronWeb.address.fromHex(address)
-    }
+  static getAddress(privateKey) {
+    return TronWeb.address.fromPrivateKey(privateKey)
   }
 
   static verify(message, signature, address) {
