@@ -1,22 +1,22 @@
 const assert = require('assert')
-const trx = require('../../../server/utils/trx')
+const trx = require('../../../server/crypto/Trx')
 const fixtures = require('../../fixtures')
 
 describe('Trx Utils', function () {
 
-  it('should sign a message', async () => {
+  it('should sign a message', async function () {
 
-    const signature = trx.sign(fixtures.trx.message, fixtures.trx.privateKey)
-    assert(signature === fixtures.trx.signature)
+    const signature = trx.sign(fixtures.authStr, fixtures.privateKey)
+    let t = fixtures.signedToken.split(',')
+    assert(signature === t[t.length -1])
   })
 
-  it('should verify a signed message', async () => {
+  it('should verify a signed message', async function () {
 
-    let isVerified = trx.verify(fixtures.trx.message, fixtures.trx.signature, fixtures.trx.base58Addr)
+    let t = fixtures.signedToken.split(',')
+    let isVerified = trx.verify(fixtures.authStr, t[t.length -1], fixtures.trxBase58Addr)
     assert(isVerified === true)
 
-    isVerified = trx.verify(fixtures.trx.message, fixtures.trx.signature, fixtures.trx.hexAddr)
-    assert(isVerified === true)
   })
 
 })
