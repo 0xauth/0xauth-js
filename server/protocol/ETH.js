@@ -1,6 +1,5 @@
 const sigUtil = require('eth-sig-util')
 const ethereumjsUtil = require('ethereumjs-util')
-const Web3 = require('web3')
 
 class ETH {
 
@@ -37,8 +36,6 @@ class ETH {
 
   static getAddress(privateKey) {
     return Buffer.from(ethereumjsUtil.privateToAddress(privateKey)).toString('hex')
-
-    return (new Web3()).eth.accounts.privateKeyToAccount(privateKey).address
   }
 
 
