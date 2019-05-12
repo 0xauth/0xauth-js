@@ -11,9 +11,9 @@
     "coverage": "nyc --reporter=html --reporter=text mocha 'test/server/**/*-spec.js'"
   },
   "dependencies": {
-    "ethers": "^4.0.27",
+    "eth-sig-util": "^2.1.2",
     "husky": "^2.2.0",
-    "tronweb": "^2.5.0",
+    "tronweb": "^2.5.3",
     "web3": "^1.0.0-beta.54"
   },
   "devDependencies": {

@@ -4,21 +4,15 @@ const fixtures = require('../fixtures')
 
 describe('Auth', function () {
 
-  let auth
-
-  before(function() {
-    auth = new Auth
-  })
-
   describe('getAuthorizationToken', function () {
 
-    describe('trx', function () {
-
-      it('should generate an authToken from an address in base58 format', async function () {
-        const authToken = auth.getAuthorizationToken(null, fixtures.rdns, fixtures.ts, fixtures.extra)
-        assert(authToken === fixtures.authToken)
+    it('should generate an authToken from a TRX address in base58 format', async function () {
+      const authToken = Auth.getAuthorizationToken({
+        issuer: fixtures.TRX.issuer,
+        createdAt: fixtures.TRX.createdAt,
+        randomString: fixtures.TRX.randomString
       })
-
+      assert(authToken === fixtures.TRX.authToken)
     })
 
   })
@@ -28,8 +22,16 @@ describe('Auth', function () {
     describe('trx', function () {
 
       it('should return a signed token', async function () {
-        const signedToken = auth.signAndReturnToken(fixtures.authToken, fixtures.trx, fixtures.privateKey)
-        assert(signedToken === fixtures.signedToken)
+        const signedToken = Auth.signAndReturnToken(fixtures.TRX.authToken, fixtures.TRX.trx, fixtures.TRX.privateKey)
+        assert(signedToken === fixtures.TRX.signedToken)
+      })
+
+    })
+    describe('eth', function () {
+
+      it('should return a signed token', async function () {
+        const signedToken = Auth.signAndReturnToken(fixtures.ETH.authToken, fixtures.ETH.eth, fixtures.ETH.privateKey)
+        assert(signedToken === fixtures.ETH.signedToken)
       })
 
     })
@@ -40,7 +42,15 @@ describe('Auth', function () {
     describe('trx', function () {
 
       it('should verify a signed token', async function () {
-        assert(auth.verifySignedToken(fixtures.signedToken))
+        assert(Auth.verifySignedToken(fixtures.TRX.signedToken))
+      })
+
+    })
+
+    describe('eth', function () {
+
+      it('should verify a signed token', async function () {
+        assert(Auth.verifySignedToken(fixtures.ETH.signedToken))
       })
 
     })
