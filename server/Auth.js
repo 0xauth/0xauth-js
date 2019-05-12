@@ -1,90 +1,72 @@
-// const eth = require('./crypto/eth')
-const Trx = require('./protocol/Trx')
+const ETH = require('./protocol/ETH')
+const TRX = require('./protocol/TRX')
 const {supportedChains} = require('./config')
-const {arrayToAuthToken, tokenToArray, isRdns, randomHexString, isTimestamp} = require('./utils')
+const {stringToArray} = require('./utils')
+const AuthToken = require('./AuthToken')
 
 class Auth {
 
-  constructor() {
-    this.version = '1'
+  static getAuthorizationToken(params) {
+
+    var authToken = new AuthToken(params)
+    return authToken.toString()
   }
 
-  getAuthorizationToken(version, rdns, ts, extra) {
-    if (typeof version !== 'string') {
-      version = this.version
+  static signAndReturnToken(authTokenString, chain, privateKey, format) {
+    if (AuthToken.isValid(authTokenString)) {
+      chain = Auth.normalizeChain(chain)
+      if (!chain) {
+        throw new Error('A valid, supported chain is required.')
+      }
+      const address = Auth.getAddress(chain, privateKey)
+      if (!address) {
+        throw new Error('A valid address is required.')
+      }
+      return Auth.signAndReturnToken_v1(authTokenString, chain, address, privateKey, format)
+    } else {
+      throw new Error('Invalid auth token string.')
     }
-    if (this.isSupportedVersion(version)) {
-      throw new Error('A valid 0xAuth version is required.')
-    }
-    if (!isRdns(rdns)) {
-      throw new Error('A valid rdns is required.')
-    }
-    if (!isTimestamp(ts)) {
-      throw new Error('A valid timestamp is required.')
-    }
-    const auth = [
-      ['0xAuth', version],
-      rdns,
-      (ts || parseInt(Date.now() / 1000)).toString(),
-      extra || [randomHexString(2)]
-    ]
-    return arrayToAuthToken(auth)
   }
 
-  signAndReturnToken(authToken, chain, privateKey) {
-    chain = Auth.normalizeChain(chain)
-    if (!chain) {
-      throw new Error('A valid, supported chain is required.')
-    }
-    const address = Auth.getAddress(chain, privateKey)
-    if (!address) {
-      throw new Error('A valid address is required.')
-    }
-    const elems = tokenToArray(authToken)
-    if (elems[0][1] === this.version) {
-      return Auth.signAndReturnToken_v1(authToken, chain, address, privateKey)
-    }
-    return false
+  static verifySignedToken(signedTokenString) {
+    signedTokenString = stringToArray(signedTokenString)
+    return Auth.verifySignedToken_v1(signedTokenString)
   }
 
-  verifySignedToken(signedToken) {
-    signedToken = tokenToArray(signedToken)
-    if (signedToken[0][1] === this.version) {
-      return Auth.verifySignedToken_v1(signedToken)
-    }
-    return false
-  }
-
-  static signAndReturnToken_v1(authToken, chain, address, privateKey) {
+  static signAndReturnToken_v1(authToken, chain, address, privateKey, format) {
     let sig
     switch (chain) {
       case 'trx':
-        sig = [Trx.sign(authToken, privateKey), 'tronweb', '1'].join(':')
+        sig = [TRX.sign(authToken, privateKey), 'tronweb', 'ps'].join(':')
         break
       case 'eth':
-
+        if (!format || format === 't1') {
+          sig = [ETH.sign(authToken, privateKey), 'web3', 't1'].join(':')
+        }
         break
-      default:
-        return false
+    }
+    if (!sig) {
+      return false
     }
     return [authToken, [chain, address].join(':'), sig].join(';')
   }
 
   static verifySignedToken_v1(signedToken) {
-    const authToken = arrayToAuthToken(signedToken.slice(0, 4))
-    const [chain, address] = signedToken[4]
-    const [signature, signer, version] = signedToken[5]
+    const authToken = AuthToken.from(signedToken).toString()
+    const [chain, address] = signedToken[signedToken.length - 2]
+    const [signature, signingTool, version] = signedToken[signedToken.length - 1]
     switch (chain) {
       case 'trx':
-        if (signer === 'tronweb' && version === '1') {
-          return Trx.verify(authToken, signature, address)
+        if (signingTool === 'tronweb' && version === 'ps') {
+          return TRX.verify(authToken, signature, address)
         }
         break
       case 'eth':
-
+        if (signingTool === 'web3' && version === 't1') {
+          return ETH.verify(authToken, signature, address)
+        }
         break
       default:
-        return false
     }
     return false
   }
@@ -92,10 +74,9 @@ class Auth {
   static getAddress(chain, privateKey) {
     switch (chain) {
       case 'trx':
-        return Trx.getAddress(privateKey)
+        return TRX.getAddress(privateKey)
       case 'eth':
-
-        break
+        return ETH.getAddress(privateKey)
       default:
 
     }
@@ -105,10 +86,6 @@ class Auth {
     if (typeof chain === 'string' && supportedChains.includes(chain.toLowerCase())) {
       return chain.toLowerCase()
     }
-  }
-
-  isSupportedVersion(version) {
-    return version !== this.version
   }
 
 }
