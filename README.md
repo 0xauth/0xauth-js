@@ -10,12 +10,12 @@ Implementation of the [0xAuth protocol](https://github.com/0xauth/0xauth)
 Params:
 ```
 issuer         The RDNS of the app/service issuing the token
-expireAt       (optional) The timestamp at expiration
+expireAt       (optional) The Linux timestamp at expiration
 extraParams    Extra-parametes related with the app
 ```
 For testing purposes, you can also pass:
 ```
-createdAt      The timestamp of creation
+createdAt      The Linux timestamp of creation
 randomString   A 4 chars base64 string
 
 ```
