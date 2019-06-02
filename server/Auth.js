@@ -12,7 +12,7 @@ class Auth {
     return authToken.toString()
   }
 
-  static signAndReturnToken(authTokenString, chain, privateKey, format) {
+  static signAndReturnToken(authTokenString, chain, privateKey, format = 'ps') {
     if (AuthToken.isValid(authTokenString)) {
       chain = Auth.normalizeChain(chain)
       if (!chain) {
@@ -22,7 +22,19 @@ class Auth {
       if (!address) {
         throw new Error('A valid address is required.')
       }
-      return Auth.signAndReturnToken_v1(authTokenString, chain, address, privateKey, format)
+      let sig
+      switch (chain) {
+        case 'trx':
+          sig = [TRX.sign(authTokenString, privateKey), 'tronweb', format].join(':')
+          break
+        case 'eth':
+          sig = [ETH.sign(authTokenString, privateKey, format), 'web3', format].join(':')
+          break
+      }
+      if (!sig) {
+        return false
+      }
+      return [authTokenString, [chain, address].join(':'), sig].join(';')
     } else {
       throw new Error('Invalid auth token string.')
     }
@@ -30,31 +42,9 @@ class Auth {
 
   static verifySignedToken(signedTokenString) {
     signedTokenString = stringToArray(signedTokenString)
-    return Auth.verifySignedToken_v1(signedTokenString)
-  }
-
-  static signAndReturnToken_v1(authToken, chain, address, privateKey, format) {
-    let sig
-    switch (chain) {
-      case 'trx':
-        sig = [TRX.sign(authToken, privateKey), 'tronweb', 'ps'].join(':')
-        break
-      case 'eth':
-        if (!format || format === 't1') {
-          sig = [ETH.sign(authToken, privateKey), 'web3', 't1'].join(':')
-        }
-        break
-    }
-    if (!sig) {
-      return false
-    }
-    return [authToken, [chain, address].join(':'), sig].join(';')
-  }
-
-  static verifySignedToken_v1(signedToken) {
-    const authToken = AuthToken.from(signedToken).toString()
-    const [chain, address] = signedToken[signedToken.length - 2]
-    const [signature, signingTool, version] = signedToken[signedToken.length - 1]
+    const authToken = AuthToken.from(signedTokenString).toString()
+    const [chain, address] = signedTokenString[signedTokenString.length - 2]
+    const [signature, signingTool, version] = signedTokenString[signedTokenString.length - 1]
     switch (chain) {
       case 'trx':
         if (signingTool === 'tronweb' && version === 'ps') {
@@ -62,8 +52,8 @@ class Auth {
         }
         break
       case 'eth':
-        if (signingTool === 'web3' && version === 't1') {
-          return ETH.verify(authToken, signature, address)
+        if (signingTool === 'web3' && /(t1|ps)/.test(version)) {
+          return ETH.verify(authToken, signature, address, version)
         }
         break
       default:

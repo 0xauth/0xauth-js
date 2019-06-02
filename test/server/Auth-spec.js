@@ -29,9 +29,14 @@ describe('Auth', function () {
     })
     describe('eth', function () {
 
-      it('should return a signed token', async function () {
+      it('should return a typed v1 signed token', async function () {
+        const signedToken = Auth.signAndReturnToken(fixtures.ETH.authToken, fixtures.ETH.eth, fixtures.ETH.privateKey, 't1')
+        assert(signedToken === fixtures.ETH.signedToken_t1)
+      })
+
+      it('should return a personal signed token', async function () {
         const signedToken = Auth.signAndReturnToken(fixtures.ETH.authToken, fixtures.ETH.eth, fixtures.ETH.privateKey)
-        assert(signedToken === fixtures.ETH.signedToken)
+        assert(signedToken === fixtures.ETH.signedToken_ps)
       })
 
     })
@@ -49,8 +54,12 @@ describe('Auth', function () {
 
     describe('eth', function () {
 
-      it('should verify a signed token', async function () {
-        assert(Auth.verifySignedToken(fixtures.ETH.signedToken))
+      it('should verify a typed signed token', async function () {
+        assert(Auth.verifySignedToken(fixtures.ETH.signedToken_t1))
+      })
+
+      it('should verify a personal signed token', async function () {
+        assert(Auth.verifySignedToken(fixtures.ETH.signedToken_ps))
       })
 
     })
