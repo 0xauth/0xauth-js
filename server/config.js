@@ -1,5 +1,13 @@
+const supportedChains = ['eth', 'trx']
+
 module.exports = {
 
-  supportedChains: ['eth', 'trx']
+  supportedChains,
+
+  normalizeChain: chain => {
+    if (typeof chain === 'string' && supportedChains.includes(chain.toLowerCase())) {
+      return chain.toLowerCase()
+    }
+  }
 
 }

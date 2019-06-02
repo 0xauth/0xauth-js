@@ -1,6 +1,6 @@
 const ETH = require('./protocol/ETH')
 const TRX = require('./protocol/TRX')
-const {supportedChains} = require('./config')
+const {supportedChains, normalizeChain} = require('./config')
 const {stringToArray} = require('./utils')
 const AuthToken = require('./AuthToken')
 
@@ -14,7 +14,7 @@ class Auth {
 
   static signAndReturnToken(authTokenString, chain, privateKey, format = 'ps') {
     if (AuthToken.isValid(authTokenString)) {
-      chain = Auth.normalizeChain(chain)
+      chain = normalizeChain(chain)
       if (!chain) {
         throw new Error('A valid, supported chain is required.')
       }
@@ -69,12 +69,6 @@ class Auth {
         return ETH.getAddress(privateKey)
       default:
 
-    }
-  }
-
-  static normalizeChain(chain) {
-    if (typeof chain === 'string' && supportedChains.includes(chain.toLowerCase())) {
-      return chain.toLowerCase()
     }
   }
 
