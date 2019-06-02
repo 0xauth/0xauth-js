@@ -3,12 +3,12 @@ A javascript library for the 0xAuth protocol
 
 ### THIS IS A WORK IN PROGRESS. IGNORE IT, FOR NOW :-)
 
+## Credits
+
+  - [Francesco Sullo](https://francesco.sullo.co)
+
 ## License
 
-MIT.
+[The MIT License](http://opensource.org/licenses/MIT)
 
-## Copyright
-
-(c) 2019, Francesco Sullo <francesco@sullo.co>, [0xNIL](https://0xnil.com)
-
-
+Copyright (c) 2019 Francesco Sullo <francesco@sullo.co>
