@@ -3,33 +3,48 @@ const ethereumjsUtil = require('ethereumjs-util')
 
 class ETH {
 
-  static typedParams(token) {
-    return {
-      data: [
-        {
-          type: 'string',
-          name: '0xAuthToken',
-          value: token
-        }
-      ]
-    }
-  }
+  static sign(token, privateKey, version = 'ps') {
 
-  static sign(token, privateKey, version = 't1') {
     privateKey = privateKey.replace(/^0x/, '')
-    if (version === 't1') {
-      privateKey = Buffer.from(privateKey, 'hex')
-      return sigUtil.signTypedDataLegacy(privateKey, ETH.typedParams(token))
+    switch (version) {
+      case 'ps':
+        privateKey = Buffer.from(privateKey, 'hex')
+        return sigUtil.personalSign(privateKey, {
+          data: token
+        })
+      case 't1':
+        privateKey = Buffer.from(privateKey, 'hex')
+        return sigUtil.signTypedDataLegacy(privateKey, {
+          data: [
+            {
+              type: 'string',
+              name: 'token',
+              value: token
+            }
+          ]
+        })
     }
     throw new Error('Unsupported signing version.')
   }
 
-  static verify(token, signature, address, version = 't1') {
-    if (version === 't1') {
-      return sigUtil.normalize(address) === sigUtil.recoverTypedSignatureLegacy({
-        data: ETH.typedParams(token).data,
-        sig: signature
-      })
+  static verify(token, signature, address, version = 'ps') {
+    switch (version) {
+      case 'ps':
+        return sigUtil.normalize(address) === sigUtil.recoverPersonalSignature({
+          data: token,
+          sig: signature
+        })
+      case 't1':
+        return sigUtil.normalize(address) === sigUtil.recoverTypedSignatureLegacy({
+          data: [
+            {
+              type: 'string',
+              name: 'token',
+              value: token
+            }
+          ],
+          sig: signature
+        })
     }
     throw new Error('Unsupported signing version.')
   }
