@@ -5,7 +5,6 @@
  */
 
 module.exports = {
-  Client: require('./client'),
-  Server: require('./server')
+  client: require('./src/client'),
+  Auth: require('./src/Auth')
 }
-

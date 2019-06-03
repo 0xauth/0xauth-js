@@ -1,23 +1,22 @@
 const assert = require('assert')
-const AuthToken = require('../../../server/AuthToken')
-const TRX = require('../../../server/protocol/TRX')
-const fixtures = require('../../fixtures').TRX
-const {stringToArray} = require('../../../server/utils')
+const TRX = require('../../../src/protocol/Trx')
+const fixtures = require('../../fixtures')
 
 describe('TRX Utils', function () {
 
   it('should sign a message', async function () {
-    const signature = TRX.sign(fixtures.authToken, fixtures.privateKey)
-    const signedToken = stringToArray(fixtures.signedToken)
-    assert(signature === signedToken[6][0])
+    const signature = TRX.sign(fixtures.hexString, fixtures.privateKey, 'ps')
+    assert(signature === fixtures.trx.signedHexString)
   })
 
-  it('should verify a signed message', async function () {
-    const signedToken = stringToArray(fixtures.signedToken)
-    const authToken = AuthToken.from(signedToken).toString()
-    let isVerified = TRX.verify(authToken, signedToken[6][0], fixtures.base58Addr)
+  it('should verify a signed message passing a base58 address', async function () {
+    let isVerified = TRX.verify(fixtures.hexString, fixtures.trx.signedHexString, fixtures.trx.base58Addr, 'ps')
     assert(isVerified === true)
+  })
 
+  it('should verify a signed message passing an hex address', async function () {
+    let isVerified = TRX.verify(fixtures.hexString, fixtures.trx.signedHexString, fixtures.trx.hexAddr, 'ps')
+    assert(isVerified === true)
   })
 
 })

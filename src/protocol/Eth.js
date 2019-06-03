@@ -1,7 +1,7 @@
 const sigUtil = require('eth-sig-util')
 const ethereumjsUtil = require('ethereumjs-util')
 
-class ETH {
+class Eth {
 
   static sign(token, privateKey, version = 'ps') {
 
@@ -56,4 +56,4 @@ class ETH {
 
 }
 
-module.exports = ETH
+module.exports = Eth

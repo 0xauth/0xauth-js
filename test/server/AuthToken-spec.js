@@ -1,6 +1,6 @@
 const assert = require('assert')
-const AuthToken = require('../../server/AuthToken')
-const fixtures = require('../fixtures').TRX
+const AuthToken = require('../../src/AuthToken')
+const fixtures = require('../fixtures')
 
 describe('AuthToken', function () {
 
@@ -36,8 +36,8 @@ describe('AuthToken', function () {
       assert(AuthToken.from(fixtures.authToken).toString() === fixtures.authToken)
     })
 
-    it('should retrieve an (unverified) unsigned token from a signed token', function () {
-      assert(AuthToken.from(fixtures.signedToken).toString() === fixtures.authToken)
+    it('should retrieve an (unverified) unsigned token from a (TRX) signed token', function () {
+      assert(AuthToken.from(fixtures.trx.signedToken).toString() === fixtures.authToken)
     })
 
   })

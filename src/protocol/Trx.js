@@ -1,6 +1,6 @@
 const TronWeb = require('tronweb')
 
-class TRX {
+class Trx {
 
   static sign(token, privateKey, version = 'ps') {
     if (version === 'ps') {
@@ -23,9 +23,9 @@ class TRX {
   }
 
   static getAddress(privateKey) {
-    return TronWeb.address.fromPrivateKey(privateKey)
+    return TronWeb.address.fromPrivateKey(privateKey.replace(/^0x/,''))
   }
 
 }
 
-module.exports = TRX
+module.exports = Trx

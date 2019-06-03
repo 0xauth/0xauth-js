@@ -1,7 +1,44 @@
 # 0xauth-js
 A javascript library for the 0xAuth protocol
 
+### ALPHA DEVELOPMENT, NOT READY YET FOR REAL WORLD USES
+
 Implementation of the [0xAuth protocol](https://github.com/0xauth/0xauth)
+
+
+## Install
+
+Server sidee:
+```
+npm i --save 0xauth
+```
+
+Client side:
+```
+npm i 0xauth
+cp node_modules/0xauth/dist/0xauth.js your/dest/folder/.
+```
+
+## Usage
+
+Server side:
+
+```
+const 0xauth = require('0xauth')
+const Auth = 0xauth.Auth
+const authToken = new 0xauth.AuthToken({...})
+...
+```
+
+Client side:
+
+```
+var client = new 0xauth.client()
+client.init('trx', tronWeb)
+// and/or
+client.init('eth', web3)
+...
+```
 
 ## Server API
 
