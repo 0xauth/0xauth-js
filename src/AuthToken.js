@@ -5,8 +5,8 @@ const {
   stringToArray,
   arrayToString,
   toArray,
-  sha3
-} = require('./utils')
+  checksum
+} = require('./Utils')
 
 class AuthToken {
   // unsigned auth token
@@ -67,7 +67,7 @@ class AuthToken {
       this.data.push(extraParams)
     }
     this.data.push([
-      sha3(this.toString()).substring(2, 4)
+      checksum(this.toString())
     ])
   }
 

@@ -1,27 +1,36 @@
 {
   "name": "0xauth",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "license": "MIT",
   "main": "index.js",
   "author": "Francesco Sullo <francesco@sullo.co>",
   "homepage": "https://0xauth.com",
   "scripts": {
-    "lint": "eslint ./server/**",
+    "lint": "eslint src/**",
     "test": "mocha 'test/server/**/*-spec.js'",
-    "coverage": "nyc --reporter=html --reporter=text mocha 'test/server/**/*-spec.js'"
+    "coverage": "nyc --reporter=html --reporter=text mocha 'test/server/**/*-spec.js'",
+    "babel": "babel --presets es2015 src/client/index.js -o dist/0xauth.js",
+    "webpack": "webpack --mode production"
   },
   "dependencies": {
+    "crypto-js": "^3.1.9-1",
     "eth-sig-util": "^2.1.2",
     "husky": "^2.2.0",
     "tronweb": "^2.6.1",
-    "web3": "^1.0.0-beta.54"
+    "web3": "^1.0.0-beta.54",
+    "webpack-cli": "^3.3.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/preset-env": "^7.0.0",
+    "babel-loader": "^8.0.6",
     "eslint": "^5.15.1",
     "eslint-plugin-node": "^8.0.1",
     "lodash": "^4.17.11",
     "mocha": "^5.1.1",
-    "nyc": "^14.1.0"
+    "nyc": "^14.1.0",
+    "webpack": "^4.32.2"
   },
   "repository": {
     "type": "git",

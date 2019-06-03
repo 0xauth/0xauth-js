@@ -1,5 +1,6 @@
 const crypto = require('crypto')
-const TronWeb = require('tronweb')
+const {supportedChains} = require('./config')
+var SHA256 = require("crypto-js/sha256");
 
 class Utils {
 
@@ -21,8 +22,8 @@ class Utils {
     return arr
   }
 
-  static sha3(str) {
-    return TronWeb.sha3(str)
+  static checksum(str) {
+    return SHA256(str).toString().substring(0,2)
   }
 
   static toArray(val) {
@@ -37,7 +38,7 @@ class Utils {
   }
 
   static randomBase64String() {
-    return crypto.randomBytes(8).toString('base64').substring(0,4)
+    return crypto.randomBytes(8).toString('base64').substring(0, 4)
   }
 
   static isTimestamp(ts) {
@@ -45,6 +46,24 @@ class Utils {
     let d = new Date(ts * 1000)
     return parseInt(d.getTime() / 1000) === ts
   }
+
+  static toHex(string, format = 'utf8') {
+    let buf = Buffer.from(string, format)
+    return '0x' + buf.toString('hex')
+  }
+
+  static fromHex(string, format = 'utf8') {
+    let buf = Buffer.from(string, 'hex')
+    return buf.toString('utf8')
+  }
+
+
+  static normalizeChain(chain) {
+    if (typeof chain === 'string' && supportedChains.includes(chain.toLowerCase())) {
+      return chain.toLowerCase()
+    }
+  }
+
 }
 
 module.exports = Utils

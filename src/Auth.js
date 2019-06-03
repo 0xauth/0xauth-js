@@ -1,7 +1,6 @@
-const ETH = require('./protocol/ETH')
-const TRX = require('./protocol/TRX')
-const {supportedChains, normalizeChain} = require('./config')
-const {stringToArray} = require('./utils')
+const ETH = require('./protocol/Eth')
+const TRX = require('./protocol/Trx')
+const {stringToArray, normalizeChain, toHex} = require('./Utils')
 const AuthToken = require('./AuthToken')
 
 class Auth {
@@ -22,13 +21,14 @@ class Auth {
       if (!address) {
         throw new Error('A valid address is required.')
       }
+      let hexString = toHex(authTokenString)
       let sig
       switch (chain) {
         case 'trx':
-          sig = [TRX.sign(authTokenString, privateKey), 'tronweb', format].join(':')
+          sig = [TRX.sign(hexString, privateKey), 'tronweb', format].join(':')
           break
         case 'eth':
-          sig = [ETH.sign(authTokenString, privateKey, format), 'web3', format].join(':')
+          sig = [ETH.sign(hexString, privateKey, format), 'web3', format].join(':')
           break
       }
       if (!sig) {
@@ -42,18 +42,19 @@ class Auth {
 
   static verifySignedToken(signedTokenString) {
     signedTokenString = stringToArray(signedTokenString)
-    const authToken = AuthToken.from(signedTokenString).toString()
+    const authTokenString = AuthToken.from(signedTokenString).toString()
+    let hexString = toHex(authTokenString)
     const [chain, address] = signedTokenString[signedTokenString.length - 2]
     const [signature, signingTool, version] = signedTokenString[signedTokenString.length - 1]
     switch (chain) {
       case 'trx':
         if (signingTool === 'tronweb' && version === 'ps') {
-          return TRX.verify(authToken, signature, address)
+          return TRX.verify(hexString, signature, address)
         }
         break
       case 'eth':
         if (signingTool === 'web3' && /(t1|ps)/.test(version)) {
-          return ETH.verify(authToken, signature, address, version)
+          return ETH.verify(hexString, signature, address, version)
         }
         break
       default:
@@ -71,7 +72,6 @@ class Auth {
 
     }
   }
-
 }
 
 module.exports = Auth
