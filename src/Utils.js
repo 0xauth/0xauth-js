@@ -1,6 +1,6 @@
 const crypto = require('crypto')
 const {supportedChains} = require('./config')
-var SHA256 = require("crypto-js/sha256");
+var TronWeb = require("tronweb");
 
 class Utils {
 
@@ -22,8 +22,8 @@ class Utils {
     return arr
   }
 
-  static checksum(str) {
-    return SHA256(str).toString().substring(0,2)
+  static keccak256(str) {
+    return TronWeb.sha3(str).substring(2)
   }
 
   static toArray(val) {

@@ -18,6 +18,7 @@ describe('AuthToken', function () {
   describe('#constructor', function () {
 
       it('should instantiate an authToken', async function () {
+        console.log(JSON.stringify(authToken.data), fixtures.json)
         assert(JSON.stringify(authToken.data) === fixtures.json)
       })
 

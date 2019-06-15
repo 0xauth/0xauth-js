@@ -5,7 +5,7 @@ const {
   stringToArray,
   arrayToString,
   toArray,
-  checksum
+  keccak256
 } = require('./Utils')
 
 class AuthToken {
@@ -29,7 +29,7 @@ class AuthToken {
       // In production usage, the createdAt param should never be passed.
       throw new Error('Invalid creation timestamp.')
     } else if (!createdAt) {
-      createdAt = parseInt(Date.now() / 1000)
+      createdAt = Math.floor(Date.now() / 1000)
     }
     timestamps.push(createdAt.toString())
     if (expireAt) {
@@ -67,7 +67,7 @@ class AuthToken {
       this.data.push(extraParams)
     }
     this.data.push([
-      checksum(this.toString())
+      keccak256(this.toString()).substring(0,1)
     ])
   }
 
