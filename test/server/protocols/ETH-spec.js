@@ -32,6 +32,4 @@ describe('ETH Utils', function () {
 
   })
 
-
-
 })

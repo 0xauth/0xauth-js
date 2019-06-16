@@ -4,8 +4,7 @@ const {
   isTimestamp,
   stringToArray,
   arrayToString,
-  toArray,
-  keccak256
+  toArray
 } = require('./Utils')
 
 class AuthToken {
@@ -66,9 +65,6 @@ class AuthToken {
       }
       this.data.push(extraParams)
     }
-    this.data.push([
-      keccak256(this.toString()).substring(0,1)
-    ])
   }
 
   toString() {
@@ -79,7 +75,7 @@ class AuthToken {
     if (!Array.isArray(tokenArray)) {
       tokenArray = stringToArray(tokenArray)
     }
-    const haxExtraParams = !(tokenArray.length % 2)
+    const haxExtraParams = tokenArray.length === 4
     return new AuthToken({
       issuer: tokenArray[1][0],
       createdAt: tokenArray[2][0],

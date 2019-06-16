@@ -23,6 +23,7 @@ describe('Auth', function () {
 
       it('should return a signed token', async function () {
         const signedToken = Auth.signAndReturnToken(fixtures.authToken, 'trx', fixtures.privateKey)
+        // console.log(signedToken)
         assert(signedToken === fixtures.trx.signedToken)
       })
 
@@ -31,11 +32,13 @@ describe('Auth', function () {
 
       it('should return a typed v1 signed token', async function () {
         const signedToken = Auth.signAndReturnToken(fixtures.authToken, 'eth', fixtures.privateKey, 't1')
+        // console.log(signedToken)
         assert(signedToken === fixtures.eth.signedToken_t1)
       })
 
       it('should return a personal signed token', async function () {
         const signedToken = Auth.signAndReturnToken(fixtures.authToken, 'eth', fixtures.privateKey)
+        // console.log(signedToken)
         assert(signedToken === fixtures.eth.signedToken_ps)
       })
 
