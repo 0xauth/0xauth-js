@@ -4,8 +4,7 @@ const {
   isTimestamp,
   stringToArray,
   arrayToString,
-  toArray,
-  checksum
+  toArray
 } = require('./Utils')
 
 class AuthToken {
@@ -29,7 +28,7 @@ class AuthToken {
       // In production usage, the createdAt param should never be passed.
       throw new Error('Invalid creation timestamp.')
     } else if (!createdAt) {
-      createdAt = parseInt(Date.now() / 1000)
+      createdAt = Math.floor(Date.now() / 1000)
     }
     timestamps.push(createdAt.toString())
     if (expireAt) {
@@ -66,9 +65,6 @@ class AuthToken {
       }
       this.data.push(extraParams)
     }
-    this.data.push([
-      checksum(this.toString())
-    ])
   }
 
   toString() {
@@ -79,7 +75,7 @@ class AuthToken {
     if (!Array.isArray(tokenArray)) {
       tokenArray = stringToArray(tokenArray)
     }
-    const haxExtraParams = !(tokenArray.length % 2)
+    const haxExtraParams = tokenArray.length === 4
     return new AuthToken({
       issuer: tokenArray[1][0],
       createdAt: tokenArray[2][0],
