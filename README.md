@@ -85,6 +85,15 @@ That would return something like:
 `signedTokenString` is a signed token containing all the info necessary for the verification.
 
 
+## History
+
+__0.1.0__
+* updating Web3 and Tronweb
+
+__0.0.6__
+* first complete version
+
+
 ## Credits
 
   - [Francesco Sullo](https://francesco.sullo.co)

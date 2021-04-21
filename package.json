@@ -1,36 +1,37 @@
 {
   "name": "0xauth",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "license": "MIT",
   "main": "index.js",
   "author": "Francesco Sullo <francesco@sullo.co>",
   "homepage": "https://0xauth.com",
   "scripts": {
     "lint": "eslint src/**",
-    "test": "mocha 'test/server/**/*-spec.js'",
-    "coverage": "nyc --reporter=html --reporter=text mocha 'test/server/**/*-spec.js'",
+    "test": "cross-env NODE_ENV=test mocha 'test/server/**/*-spec.js'",
+    "coverage": "cross-env NODE_ENV=test  nyc --reporter=html --reporter=text mocha 'test/server/**/*-spec.js'",
     "babel": "babel --presets es2015 src/client/index.js -o dist/0xauth.js",
     "webpack": "webpack --mode production"
   },
   "dependencies": {
     "crypto-js": "^3.3.0",
-    "eth-sig-util": "^2.5.3",
+    "eth-sig-util": "^2.5.4",
     "husky": "^2.7.0",
-    "tronweb": "^2.10.2",
-    "web3": "^1.2.9",
+    "tronweb": "^3.2.6",
+    "web3": "^1.3.5",
     "webpack-cli": "^3.3.12"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.3",
-    "@babel/plugin-proposal-class-properties": "^7.10.1",
-    "@babel/preset-env": "^7.10.3",
-    "babel-loader": "^8.1.0",
+    "@babel/core": "^7.13.15",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/preset-env": "^7.13.15",
+    "babel-loader": "^8.2.2",
+    "cross-env": "^7.0.3",
     "eslint": "^5.15.1",
     "eslint-plugin-node": "^8.0.1",
-    "lodash": "^4.17.15",
-    "mocha": "^8.0.1",
+    "lodash": "^4.17.21",
+    "mocha": "^8.3.2",
     "nyc": "^14.1.1",
-    "webpack": "^4.43.0"
+    "webpack": "^4.46.0"
   },
   "repository": {
     "type": "git",
