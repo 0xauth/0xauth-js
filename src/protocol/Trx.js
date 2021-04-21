@@ -7,7 +7,7 @@ class Trx {
       if (!TronWeb.utils.isHex(token)) {
         token = Buffer.from(token, 'utf8').toString('hex')
       }
-      return TronWeb.Trx.signString(token, privateKey)
+      return TronWeb.Trx.signString(token, privateKey.replace(/^0x/, ''))
     }
     throw new Error('Unsupported signing version.')
   }

@@ -1,6 +1,7 @@
 const crypto = require('crypto')
 const {supportedChains} = require('./config')
-var TronWeb = require("tronweb");
+const TronWeb = require("tronweb");
+// const TronWeb = require('../../../Tron/tronweb/dist/TronWeb.node');
 
 class Utils {
 

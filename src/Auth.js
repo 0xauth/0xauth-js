@@ -1,6 +1,6 @@
 const ETH = require('./protocol/Eth')
 const TRX = require('./protocol/Trx')
-const {stringToArray, normalizeChain, toHex} = require('./Utils')
+const {stringToArray, normalizeChain, toHex, keccak256} = require('./Utils')
 const AuthToken = require('./AuthToken')
 
 class Auth {
